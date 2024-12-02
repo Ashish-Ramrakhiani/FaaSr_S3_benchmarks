@@ -88,6 +88,11 @@ s3_performance_benchmark <- function(foldername, number_samples) {
   get_df <- do.call(rbind, get_results)
   write.csv(get_df, file.path(foldername, "get_benchmark.csv"), row.names = FALSE)
   
+  faasr_put_file(local_folder = foldername, 
+                 local_file = "get_benchmark.csv", 
+                 remote_folder = remote_folder, 
+                 remote_file = "get_benchmark.csv")
+  
   # List Operation Benchmark
   list_sizes <- c(10, 100, 1000, 10000)
   list_results <- lapply(list_sizes, function(num_objects) {
