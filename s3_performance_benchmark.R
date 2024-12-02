@@ -4,7 +4,6 @@ library(stats)
 #'
 #' @param foldername Character string specifying the folder to store benchmark results
 #' @param number_samples Integer specifying the number of times to repeat each operation
-#' @param server_name Character string with the name of the S3 server (defaults to DefaultDataStore)
 #'
 #' @return NULL (saves CSV files with benchmark results)
 s3_performance_benchmark <- function(foldername, number_samples) {
@@ -26,7 +25,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
     put_times <- sapply(1:number_samples, function(i) {
       remote_file <- paste0("benchmark/put_", size, "B_", i, ".bin")
       start_time <- Sys.time()
-      faasr_put_file(server_name, local_folder = foldername, 
+      faasr_put_file(local_folder = foldername, 
                      local_file = basename(local_file), 
                      remote_folder = "benchmark", 
                      remote_file = remote_file)
@@ -57,8 +56,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
       local_file <- file.path(foldername, paste0("get_test_", size, "B_", i, ".bin"))
       
       start_time <- Sys.time()
-      faasr_get_file(server_name, 
-                     remote_folder = "benchmark", 
+      faasr_get_file(remote_folder = "benchmark", 
                      remote_file = remote_file, 
                      local_folder = foldername, 
                      local_file = basename(local_file))
@@ -93,8 +91,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
     for (i in 1:num_objects) {
       local_file <- file.path(foldername, paste0("small_", i, ".bin"))
       writeBin(raw(1024), local_file)
-      faasr_put_file(server_name, 
-                     local_folder = foldername, 
+      faasr_put_file(local_folder = foldername, 
                      local_file = paste0("small_", i, ".bin"), 
                      remote_folder = benchmark_folder, 
                      remote_file = paste0("small_", i, ".bin"))
@@ -106,7 +103,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
       start_time <- Sys.time()
       
       # Use faasr_get_folder_list to get list of objects
-      object_list <- faasr_get_folder_list(server_name, faasr_prefix = benchmark_folder)
+      object_list <- faasr_get_folder_list(faasr_prefix = benchmark_folder)
       
       end_time <- Sys.time()
       as.numeric(end_time - start_time)
