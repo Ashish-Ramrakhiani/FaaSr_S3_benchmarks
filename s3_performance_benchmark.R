@@ -12,6 +12,8 @@ s3_performance_benchmark <- function(foldername, number_samples) {
     dir.create(foldername, recursive = TRUE)
   }
   
+  remote_folder = "benchmark_results"
+  
   # File sizes for benchmarking (10KB to 100MB in 10x increments)
   file_sizes <- c(10*1024, 100*1024, 1*1024*1024, 10*1024*1024, 100*1024*1024)
   
@@ -48,6 +50,11 @@ s3_performance_benchmark <- function(foldername, number_samples) {
   })
   put_df <- do.call(rbind, put_results)
   write.csv(put_df, file.path(foldername, "put_benchmark.csv"), row.names = FALSE)
+  
+  faasr_put_file(local_folder = foldername, 
+                 local_file = "put_benchmark.csv", 
+                 remote_folder = remote_folder, 
+                 remote_file = "put_benchmark.csv")
   
   # Get Operation Benchmark
   get_results <- lapply(file_sizes, function(size) {
@@ -87,15 +94,21 @@ s3_performance_benchmark <- function(foldername, number_samples) {
     # Ensure benchmark folder exists
     benchmark_folder <- paste0("benchmark/list_", num_objects, "/")
     
-    # Populate folder with small files (1KB each)
-    for (i in 1:num_objects) {
-      local_file <- file.path(foldername, paste0("small_", i, ".bin"))
-      writeBin(raw(1024), local_file)
-      faasr_put_file(local_folder = foldername, 
-                     local_file = paste0("small_", i, ".bin"), 
-                     remote_folder = benchmark_folder, 
-                     remote_file = paste0("small_", i, ".bin"))
-      file.remove(local_file)
+    # Check if files already exist before creating
+    existing_objects <- faasr_get_folder_list(faasr_prefix = benchmark_folder)
+    
+    # Only create files if folder is empty
+    if (length(existing_objects) == 0) {
+      # Populate folder with small files (1KB each)
+      for (i in 1:num_objects) {
+        local_file <- file.path(foldername, paste0("small_", i, ".bin"))
+        writeBin(raw(1024), local_file)
+        faasr_put_file(local_folder = foldername, 
+                       local_file = paste0("small_", i, ".bin"), 
+                       remote_folder = benchmark_folder, 
+                       remote_file = paste0("small_", i, ".bin"))
+        file.remove(local_file)
+      }
     }
     
     # Benchmark list operations
@@ -122,6 +135,10 @@ s3_performance_benchmark <- function(foldername, number_samples) {
   list_df <- do.call(rbind, list_results)
   write.csv(list_df, file.path(foldername, "list_benchmark.csv"), row.names = FALSE)
   
+  faasr_put_file(local_folder = foldername, 
+                 local_file = "list_benchmark.csv", 
+                 remote_folder = remote_folder, 
+                 remote_file = "list_benchmark.csv")
   # Return invisible NULL
   invisible(NULL)
 }
