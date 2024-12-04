@@ -1,0 +1,38 @@
+{
+    "ComputeServers": {
+        "My_GitHub_Account": {
+            "FaaSType": "GitHubActions",
+            "UserName": "Ashish-Ramrakhiani",
+            "ActionRepoName": "FaaSr_S3_benchmarks_actions",
+            "Branch": "main"
+        }
+    },
+    "DataStores": {
+        "My_Minio_Bucket": {
+            "Endpoint": "https://s3.faasr.io",
+            "Bucket": "bucket5",
+            "Writable": "TRUE"
+        }
+    },
+    "FunctionList": {
+        "s3_performance_benchmark": {
+            "FunctionName": "s3_performance_benchmark",
+            "FaaSServer": "My_GitHub_Account",
+            "Arguments": {
+                "foldername": "benchmark",
+                "number_samples": "10"
+            }
+        }
+    },
+    "ActionContainers": {
+        "s3_performance_benchmark": "ghcr.io/faasr/github-actions-tidyverse"
+    },
+    "FunctionGitRepo": {
+        "s3_performance_benchmark": "Ashish-Ramrakhiani/FaaSr_S3_benchmarks"
+    },
+    "FunctionInvoke": "s3_performance_benchmark",
+    "FaaSrLog": "FaaSrLog_becnhmarks",
+    "LoggingDataStore": "My_Minio_Bucket",
+    "DefaultDataStore": "My_Minio_Bucket"
+}
+
