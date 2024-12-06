@@ -9,8 +9,8 @@
     },
     "DataStores": {
         "My_Minio_Bucket": {
-            "Endpoint": "https://s3.faasr.io",
-            "Bucket": "bucket5",
+            "Endpoint": "https://s3.us-west-2.amazonaws.com",
+            "Bucket": "faasr-bucket-0001",
             "Writable": "TRUE"
         }
     },
@@ -25,7 +25,7 @@
         }
     },
     "ActionContainers": {
-        "s3_performance_benchmark": "ghcr.io/faasr/github-actions-tidyverse"
+        "s3_performance_benchmark": "ghcr.io/faasr/github-actions-tidyverse:1.4.1"
     },
     "FunctionGitRepo": {
         "s3_performance_benchmark": "Ashish-Ramrakhiani/FaaSr_S3_benchmarks"

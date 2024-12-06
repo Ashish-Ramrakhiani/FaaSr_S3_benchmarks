@@ -26,7 +26,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
                      remote_folder = "benchmark", 
                      remote_file = remote_file)
       end_time <- Sys.time()
-      as.numeric(end_time - start_time)
+      as.numeric(difftime(end_time, start_time, units = "milliseconds"))
     })
     
     
@@ -64,7 +64,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
       
       file.remove(local_file)
       
-      as.numeric(end_time - start_time)
+      as.numeric(difftime(end_time, start_time, units = "milliseconds"))
     })
     
     data.frame(
@@ -84,7 +84,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
                  remote_folder = remote_folder, 
                  remote_file = "get_benchmark.csv")
   
-  list_sizes <- c(10, 100, 1000, 10000)
+  list_sizes <- c(10, 100, 900)
   list_results <- lapply(list_sizes, function(num_objects) {
     benchmark_folder <- paste0("benchmark/list_", num_objects, "/")
     
@@ -111,7 +111,7 @@ s3_performance_benchmark <- function(foldername, number_samples) {
       object_list <- faasr_get_folder_list(faasr_prefix = benchmark_folder)
       
       end_time <- Sys.time()
-      as.numeric(end_time - start_time)
+      as.numeric(difftime(end_time, start_time, units = "milliseconds"))
     })
     
     # Compute statistics
